@@ -7,6 +7,7 @@ import {
   faStackOverflow,
 } from "@fortawesome/free-brands-svg-icons";
 import { Box, HStack } from "@chakra-ui/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const socials = [
   {
@@ -31,9 +32,22 @@ const socials = [
   },
 ];
 
+const sections = [
+  {
+    id: "contactme",
+    label: "Contract Me",
+    url: "#contactme"
+  },
+  {
+    id: "projects",
+    label: "Project",
+    url: "#projects"
+  }];
+
 const Header = () => {
-  const handleClick = (anchor) => () => {
+  const handleClick = (anchor) => {
     const id = `${anchor}-section`;
+    console.log(`handleClick ${id}`);
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({
@@ -64,10 +78,27 @@ const Header = () => {
         >
           <nav>
             {/* Add social media links based on the `socials` data */}
+            <HStack spacing={8}>
+              {
+                socials.map(social => {
+                  return (<a href={social.url}>
+                    <FontAwesomeIcon icon={social.icon} size="2x" />
+
+                  </a>)
+                })
+              }
+            </HStack>
           </nav>
           <nav>
             <HStack spacing={8}>
               {/* Add links to Projects and Contact me section */}
+              {
+                sections.map((section) => {
+                  return (
+                    <a href={section.url} onClick={() => handleClick(section.id)}>{section.label}</a>
+                  );
+                })
+              }
             </HStack>
           </nav>
         </HStack>
