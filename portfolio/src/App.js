@@ -1,4 +1,3 @@
-import './App.css';
 import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
 import { AlertProvider } from "./context/alertContext";
 import Header from "./components/Header";

@@ -68,6 +68,7 @@ const Header = () => {
       transitionDuration=".3s"
       transitionTimingFunction="ease-in-out"
       backgroundColor="#18181b"
+      zIndex={1000}
     >
       <Box color="white" maxWidth="1280px" margin="0 auto">
         <HStack
@@ -90,7 +91,7 @@ const Header = () => {
             </HStack>
           </nav>
           <nav>
-            <HStack spacing={8}>
+            <HStack gap="8">
               {/* Add links to Projects and Contact me section */}
               {
                 sections.map((section) => {
