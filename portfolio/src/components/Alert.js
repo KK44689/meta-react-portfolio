@@ -18,7 +18,7 @@ function Alert() {
 
   return (
     <Dialog.Root
-      isOpen={isOpen}
+      open={isOpen}
       leastDestructiveRef={cancelRef}
       onClose={onClose}
     >

@@ -16,15 +16,21 @@ import * as Yup from 'yup';
 import FullScreenSection from "./FullScreenSection";
 import useSubmit from "../hooks/useSubmit";
 import { useAlertContext } from "../context/alertContext";
+import { MoonLoader } from "react-spinners";
 
 const ContactMeSection = () => {
   const { isLoading, response, submit } = useSubmit();
-  const { onOpen } = useAlertContext();
+  const { onOpen, onClose } = useAlertContext();
 
   const formik = useFormik({
-    initialValues: {},
-    onSubmit: (values) => { },
-    validationSchema: Yup.object({}),
+    initialValues: { firstName: "", email: "", type: "", comment: "" },
+    onSubmit: (values) => { submit("", values) },
+    validationSchema: Yup.object({
+      firstName: Yup.string().required("Required"),
+      email: Yup.string().email("Invalid email address").required("Required"),
+      type: Yup.string(),
+      comment: Yup.string()
+    }),
   });
 
   const options = createListCollection({
@@ -36,6 +42,24 @@ const ContactMeSection = () => {
   })
 
   const [value, setValue] = useState([options.items[0].value]);
+
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
+    formik.handleSubmit();
+  }
+
+  const handleClickOutsideElement = (e) => {
+    onClose();
+    document.removeEventListener("mousedown", handleClickOutsideElement);
+  }
+
+  useEffect(() => {
+    if (response != null) {
+      console.log(`useeffect: ${response.type} ${response.message} ${response.type === "error"}`);
+      onOpen(response.type, response.message);
+      document.addEventListener("mousedown", handleClickOutsideElement);
+    }
+  }, [response]);
 
   return (
     <FullScreenSection
@@ -49,24 +73,26 @@ const ContactMeSection = () => {
           Contact me
         </Heading>
         <Box p={6} rounded="md" w="100%">
-          <form>
+          <form onSubmit={handleOnSubmit}>
             <VStack spacing={4}>
-              <Field.Root invalid={false}>
+              <Field.Root invalid={formik.touched.firstName && formik.errors.firstName}>
                 <Field.Label htmlFor="firstName">Name</Field.Label>
                 <Input
                   id="firstName"
                   name="firstName"
+                  {...formik.getFieldProps("firstName")}
                 />
-                <Field.ErrorText ></Field.ErrorText>
+                <Field.ErrorText>{formik.errors.firstName}</Field.ErrorText>
               </Field.Root >
-              <Field.Root invalid={false}>
+              <Field.Root invalid={formik.touched.email && formik.errors.email}>
                 <Field.Label htmlFor="email">Email Address</Field.Label>
                 <Input
                   id="email"
                   name="email"
                   type="email"
+                  {...formik.getFieldProps("email")}
                 />
-                <Field.ErrorText></Field.ErrorText>
+                <Field.ErrorText>{formik.errors.email}</Field.ErrorText>
               </Field.Root >
               <Field.Root >
                 <Field.Label htmlFor="type">Type of enquiry</Field.Label>
@@ -98,17 +124,17 @@ const ContactMeSection = () => {
                   </Portal>
                 </Select.Root>
               </Field.Root >
-              <Field.Root invalid={false}>
+              <Field.Root>
                 <Field.Label htmlFor="comment">Your message</Field.Label>
                 <Textarea
                   id="comment"
                   name="comment"
                   height={250}
+                  {...formik.getFieldProps("comment")}
                 />
-                <Field.ErrorText></Field.ErrorText>
               </Field.Root >
               <Button type="submit" colorScheme="purple" width="full">
-                Submit
+                {isLoading ? <MoonLoader color="#ffffff" size="16px" /> : "Submit"}
               </Button>
             </VStack>
           </form>
