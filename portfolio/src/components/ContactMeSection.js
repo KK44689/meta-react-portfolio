@@ -29,7 +29,7 @@ const ContactMeSection = () => {
       firstName: Yup.string().required("Required"),
       email: Yup.string().email("Invalid email address").required("Required"),
       type: Yup.string(),
-      comment: Yup.string()
+      comment: Yup.string().min(25, "Must be at least 25 characters.").required("Required")
     }),
   });
 
@@ -55,9 +55,11 @@ const ContactMeSection = () => {
 
   useEffect(() => {
     if (response != null) {
-      console.log(`useeffect: ${response.type} ${response.message} ${response.type === "error"}`);
       onOpen(response.type, response.message);
       document.addEventListener("mousedown", handleClickOutsideElement);
+      if(response.type==="success") {
+        formik.resetForm();
+      }
     }
   }, [response]);
 
@@ -124,7 +126,7 @@ const ContactMeSection = () => {
                   </Portal>
                 </Select.Root>
               </Field.Root >
-              <Field.Root>
+              <Field.Root invalid={formik.touched.comment && formik.errors.comment}>
                 <Field.Label htmlFor="comment">Your message</Field.Label>
                 <Textarea
                   id="comment"
@@ -132,6 +134,7 @@ const ContactMeSection = () => {
                   height={250}
                   {...formik.getFieldProps("comment")}
                 />
+                <Field.ErrorText>{formik.errors.comment}</Field.ErrorText>
               </Field.Root >
               <Button type="submit" colorScheme="purple" width="full">
                 {isLoading ? <MoonLoader color="#ffffff" size="16px" /> : "Submit"}
