@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import {
   faGithub,
@@ -57,18 +57,44 @@ const Header = () => {
     }
   };
 
+  //Handle header transitions
+  const scrollPos = useRef(0);
+  const [showHeader, setShowHeader] = useState(true);
+  const headerRef = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = (e) => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > scrollPos.current && currentScrollY > 50) {
+        setShowHeader(false);
+      } else {
+        setShowHeader(true);
+      }
+
+      scrollPos.current = currentScrollY;
+    }
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+    };
+  }, []);
+
   return (
     <Box
       position="fixed"
       top={0}
       left={0}
       right={0}
-      translateY={0}
+      transform={showHeader ? "traslateY(0)" : "translateY(-200%)"}
       transitionProperty="transform"
       transitionDuration=".3s"
       transitionTimingFunction="ease-in-out"
       backgroundColor="#18181b"
       zIndex={1000}
+      ref={headerRef}
     >
       <Box color="white" maxWidth="1280px" margin="0 auto">
         <HStack
